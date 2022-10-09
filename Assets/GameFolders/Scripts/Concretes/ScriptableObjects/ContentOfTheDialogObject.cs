@@ -10,6 +10,7 @@ namespace VisualNovelTryout.ScriptableObjects
     public class ContentOfTheDialogObject
     {
         public Characters characters;
+        //public List<string> context = new List<string>();
         public string context;
         public Image image;
 
