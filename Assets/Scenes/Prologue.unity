@@ -377,8 +377,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 3875536896
-  m_fontColor: {r: 0, g: 0, b: 0, a: 0.90588236}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -879,7 +879,7 @@ MonoBehaviour:
   textBox: {fileID: 666391767}
   nameBox: {fileID: 1803336658}
   TextPanel: {fileID: 911815409}
-  typingSpeed: 0.04
+  typingSpeed: 0.05
 --- !u!4 &2088918026
 Transform:
   m_ObjectHideFlags: 0

@@ -12,7 +12,7 @@ namespace VisualNovelTryout.Managers
         [SerializeField] DialogObject eventOne;
 
         int index = 0;
-        string name = "";
+        
         private void Awake()
         {
             
@@ -20,10 +20,8 @@ namespace VisualNovelTryout.Managers
 
         private void OnEnable()
         {
-
-            // DialogueSystemController.StartDialogue(eventOne.eventDialogs[0].context, eventOne.eventDialogs[0].characters);
-
-            eventOne.eventDialogs[0].context = $"{name} <b>Hi.</b>";
+ 
+            
         }
 
         private void Update()
@@ -32,19 +30,17 @@ namespace VisualNovelTryout.Managers
             {
                 if (DialogueSystemController.Typing)
                 {
-                    DialogueSystemController.TypingDialogue(eventOne.eventDialogs[index -1].context, eventOne.eventDialogs[index -1].characters);
+                    DialogueSystemController.TypeDialogue(eventOne.eventDialogs[index -1].context, eventOne.eventDialogs[index -1].characters);
                 }
                 else
                 {
                     index++;
-                    DialogueSystemController.TypingDialogue(eventOne.eventDialogs[index -1].context, eventOne.eventDialogs[index -1].characters);
+                    DialogueSystemController.TypeDialogue(eventOne.eventDialogs[index -1].context, eventOne.eventDialogs[index -1].characters);
                 }
 
              
             }
         }
-
-        
 
 
     }

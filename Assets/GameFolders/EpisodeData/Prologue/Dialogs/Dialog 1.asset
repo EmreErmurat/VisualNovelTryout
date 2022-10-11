@@ -15,14 +15,20 @@ MonoBehaviour:
   ID: 1
   eventDialogs:
   - characters: 2
-    context: ' <b>Hi.</b>'
+    context: <color=red><i>Red Italic</i></color> <color=green>and Green</color>
     image: {fileID: 0}
   - characters: 1
-    context: Pellentesque pellentesque ut libero in posuere.
+    context: <color=#00ffffff>Pellentesque pellentesque ut libero in posuere.</color>
     image: {fileID: 0}
   - characters: 1
     context: Vivamus efficitur eleifend elit eu tempor.
     image: {fileID: 0}
   - characters: 1
-    context: ' Interdum et malesuada fames ac ante ipsum primis in faucibus.'
+    context: Interdum et malesuada fames ac ante ipsum primis in faucibus.
+    image: {fileID: 0}
+  - characters: 2
+    context: 
+    image: {fileID: 0}
+  - characters: 1
+    context: Interdum et malesuada fames ac ante ipsum primis in faucibus.
     image: {fileID: 0}

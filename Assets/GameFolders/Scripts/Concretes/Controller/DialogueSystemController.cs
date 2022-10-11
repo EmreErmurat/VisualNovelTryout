@@ -12,7 +12,7 @@ namespace VisualNovelTryout.Controller
         //TextBox IU Element
         [SerializeField] TextMeshProUGUI textBox;
         [SerializeField] TextMeshProUGUI nameBox;
-        [SerializeField] GameObject TextPanel;
+        [SerializeField] GameObject textPanel;
         
 
         //textSpeed OnEnable da GamaManager'den al?nacak
@@ -27,10 +27,9 @@ namespace VisualNovelTryout.Controller
         // NameBox Typing speed. -- Lines Index
         float nameTypingSpeed = 0.02f;
 
-        
 
         //Control
-        
+
         public bool Typing { get; private set; }
 
         //Coroutine
@@ -38,12 +37,12 @@ namespace VisualNovelTryout.Controller
         Coroutine typeNameCoroutine;
 
 
-        public void TypingDialogue(string text, Enums.Characters charactersEnum)
+        public void TypeDialogue(string text, Enums.Characters charactersEnum)
         {
 
             if (text == string.Empty)
             {
-                TextPanel.SetActive(false);
+                textPanel.SetActive(false);
                 return;
             }
 
@@ -60,17 +59,18 @@ namespace VisualNovelTryout.Controller
                 StopCoroutine(typeDialogueCoroutine);
                 Typing = false;
                 textBox.text = Dialoguetext;
-                
-
+               
             }
             else
             {
                 Dialoguetext = text;
-                TextPanel.SetActive(true);
-                ClearDialogue();
+                textPanel.SetActive(true);
+                textBox.text = string.Empty;
                 typeDialogueCoroutine = StartCoroutine(TypeLine());
-             
+                        
             }
+
+
 
         }
 
@@ -87,32 +87,43 @@ namespace VisualNovelTryout.Controller
         {
             Typing = true;
 
-            
-            //type each character 1 by 1
-            foreach (char c in Dialoguetext.ToCharArray())
+            for (int i = 0; i < Dialoguetext.Length; i++)
             {
-                textBox.text += c;
+                if (Dialoguetext[i] == '<')
+                    textBox.text += SkipRichText(ref i);
+                else
+                    textBox.text += Dialoguetext[i];
+
                 yield return new WaitForSeconds(typingSpeed);
             }
 
             Typing = false;
             
 
-        }
- 
 
-        void ClearDialogue()
+        }
+        private string SkipRichText(ref int i)
         {
-            
-            
-            //characterName = string.Empty;
-            textBox.text = string.Empty;
-            //nameBox.text = string.Empty;
+            string _richText = "";
+
+            while (true)
+            {
+                if (Dialoguetext[i] != '>')
+                {
+                    _richText += Dialoguetext[i];
+                }
+                else
+                {
+                    _richText += Dialoguetext[i];
+                    return _richText;
+                    break;
+                }
+
+                i++;
+            }
+
         }
-
-
-
-
+        
     }
 }
 
