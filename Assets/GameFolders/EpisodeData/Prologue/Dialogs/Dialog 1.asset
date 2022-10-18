@@ -16,19 +16,29 @@ MonoBehaviour:
   eventDialogs:
   - characters: 2
     context: <color=red><i>Red Italic</i></color> <color=green>and Green</color>
-    image: {fileID: 0}
+    sprite: {fileID: 21300000, guid: 5b6f4103ae4b7e147afb17983ef5d38d, type: 3}
+    FadeTime: 0.5
   - characters: 1
     context: <color=#00ffffff>Pellentesque pellentesque ut libero in posuere.</color>
-    image: {fileID: 0}
+    sprite: {fileID: 21300000, guid: f13929be137274c45874fa0da46d657b, type: 3}
+    FadeTime: 0.5
   - characters: 1
     context: Vivamus efficitur eleifend elit eu tempor.
-    image: {fileID: 0}
+    sprite: {fileID: 21300000, guid: d720d9ee9996bbf46ae72550b9daf44f, type: 3}
+    FadeTime: 0.5
   - characters: 1
     context: Interdum et malesuada fames ac ante ipsum primis in faucibus.
-    image: {fileID: 0}
+    sprite: {fileID: 21300000, guid: aae81fb9b7665ff449623cc667ed1f8b, type: 3}
+    FadeTime: 0.5
   - characters: 2
     context: 
-    image: {fileID: 0}
+    sprite: {fileID: 21300000, guid: d37be5618a2baab41b2ce2071e01d9fd, type: 3}
+    FadeTime: 0.5
   - characters: 1
     context: Interdum et malesuada fames ac ante ipsum primis in faucibus.
-    image: {fileID: 0}
+    sprite: {fileID: 21300000, guid: 753be9dd36cd78e4f952675a205eea41, type: 3}
+    FadeTime: 0.5
+  - characters: 1
+    context: Interdum et malesuada fames ac ante ipsum primis in faucibus.
+    sprite: {fileID: 21300000, guid: f282f708fa5ae434ebcc5eb923203d37, type: 3}
+    FadeTime: 0.5

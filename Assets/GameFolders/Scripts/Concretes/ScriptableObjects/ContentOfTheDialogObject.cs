@@ -12,7 +12,9 @@ namespace VisualNovelTryout.ScriptableObjects
         public Characters characters;
         //public List<string> context = new List<string>();
         public string context;
-        public Image image;
+        public Sprite sprite;
+        public float FadeTime;
+        
 
     }
 

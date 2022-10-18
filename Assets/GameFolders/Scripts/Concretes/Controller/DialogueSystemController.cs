@@ -71,7 +71,11 @@ namespace VisualNovelTryout.Controller
             }
 
 
+        }
 
+        public void VisableTextBox()
+        {
+            textPanel.SetActive(false);
         }
 
         IEnumerator TypeName()

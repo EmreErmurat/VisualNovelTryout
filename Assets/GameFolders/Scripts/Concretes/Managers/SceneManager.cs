@@ -9,6 +9,7 @@ namespace VisualNovelTryout.Managers
     public class SceneManager : MonoBehaviour
     {
         [SerializeField] DialogueSystemController DialogueSystemController;
+        [SerializeField] SceneUIManager sceneUIManager;
         [SerializeField] DialogObject eventOne;
 
         int index = 0;
@@ -20,7 +21,7 @@ namespace VisualNovelTryout.Managers
 
         private void OnEnable()
         {
- 
+            
             
         }
 
@@ -28,17 +29,30 @@ namespace VisualNovelTryout.Managers
         {
             if (Input.GetMouseButtonDown(0))
             {
-                if (DialogueSystemController.Typing)
+                //if (DialogueSystemController.Typing)
+                //{
+                //    DialogueSystemController.TypeDialogue(eventOne.eventDialogs[index].context, eventOne.eventDialogs[index].characters);
+                //}
+                //else
+                //{
+
+                //    DialogueSystemController.TypeDialogue(eventOne.eventDialogs[index].context, eventOne.eventDialogs[index].characters);
+                //    sceneUIManager.ChangeImage(eventOne.eventDialogs[index].sprite, eventOne.eventDialogs[index].FadeTime);
+                //    index++;
+                //}
+                if (DialogueSystemController.Typing || sceneUIManager.changeImageRunning)
                 {
-                    DialogueSystemController.TypeDialogue(eventOne.eventDialogs[index -1].context, eventOne.eventDialogs[index -1].characters);
+                    index--;
+                    sceneUIManager.Test(eventOne.eventDialogs[index].sprite, eventOne.eventDialogs[index].FadeTime, eventOne.eventDialogs[index].context, eventOne.eventDialogs[index].characters);
+                    index++;
                 }
                 else
                 {
+                    sceneUIManager.Test(eventOne.eventDialogs[index].sprite, eventOne.eventDialogs[index].FadeTime, eventOne.eventDialogs[index].context, eventOne.eventDialogs[index].characters);
                     index++;
-                    DialogueSystemController.TypeDialogue(eventOne.eventDialogs[index -1].context, eventOne.eventDialogs[index -1].characters);
                 }
 
-             
+                
             }
         }
 
