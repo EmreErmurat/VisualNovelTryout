@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a08e2b15fc8228244b8d39bac0942f4f, type: 3}
+  m_Name: Introduction
+  m_EditorClassIdentifier: 
+  ID: 0
+  SceneContent:
+  - sceneState: 0
+    characters: 0
+    context: 
+    sprite: {fileID: 21300000, guid: f84cdfb6abc402d4fae5b38f99258e2b, type: 3}
+    FadeTime: 0.3
+    WaitTime: 0
+  - sceneState: 0
+    characters: 1
+    context: I've been away for a long time and everything was going so well.
+    sprite: {fileID: 21300000, guid: 8234cada568e09249bfe406c3e9111af, type: 3}
+    FadeTime: 0.3
+    WaitTime: 0
+  - sceneState: 0
+    characters: 1
+    context: Finishing the high school and enrolling into a good university...
+    sprite: {fileID: 0}
+    FadeTime: 0.3
+    WaitTime: 0
+  - sceneState: 0
+    characters: 1
+    context: Sharing a dorm room with a good friend...
+    sprite: {fileID: 21300000, guid: 59017ac3015e3db44b3ce3a1a04fc337, type: 3}
+    FadeTime: 0.3
+    WaitTime: 0
+  - sceneState: 0
+    characters: 1
+    context: Everything changed with a notification letter and a phone call.
+    sprite: {fileID: 0}
+    FadeTime: 0.3
+    WaitTime: 0
+  - sceneState: 0
+    characters: 1
+    context: Here we go. Back to Nicole's again..
+    sprite: {fileID: 21300000, guid: 8e470bf474abd2b4196bf0887bcd8488, type: 3}
+    FadeTime: 0.3
+    WaitTime: 0
+  - sceneState: 2
+    characters: 0
+    context: 
+    sprite: {fileID: 21300000, guid: 8b818bc2ad786f544b3b1e805ad6d393, type: 3}
+    FadeTime: 0.5
+    WaitTime: 0.5
+  - sceneState: 2
+    characters: 0
+    context: 
+    sprite: {fileID: 21300000, guid: c51ec8cad94540c4abb9939226dc66a2, type: 3}
+    FadeTime: 0.5
+    WaitTime: 0.5
+  - sceneState: 2
+    characters: 0
+    context: 
+    sprite: {fileID: 21300000, guid: f84cdfb6abc402d4fae5b38f99258e2b, type: 3}
+    FadeTime: 0.5
+    WaitTime: 0.5
+  - sceneState: 2
+    characters: 0
+    context: 
+    sprite: {fileID: 21300000, guid: eb5a66d1a37c2454fbe824c85965ea97, type: 3}
+    FadeTime: 0.5
+    WaitTime: 0.5
+  - sceneState: 2
+    characters: 0
+    context: 
+    sprite: {fileID: 21300000, guid: f84cdfb6abc402d4fae5b38f99258e2b, type: 3}
+    FadeTime: 0.5
+    WaitTime: 0.5
