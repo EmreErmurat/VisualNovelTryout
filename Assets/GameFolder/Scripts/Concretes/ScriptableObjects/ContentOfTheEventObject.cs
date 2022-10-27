@@ -16,6 +16,7 @@ namespace VisualNovelTryout.ScriptableObjects
         public float FadeTime;
         public float WaitTime;
 
+       
 
     }
 

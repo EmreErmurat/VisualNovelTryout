@@ -11,6 +11,7 @@ namespace VisualNovelTryout.ScriptableObjects
         public int ID;
         public List<ContentOfTheEventObject> SceneContent = new List<ContentOfTheEventObject>();
 
+
     }
       
 }

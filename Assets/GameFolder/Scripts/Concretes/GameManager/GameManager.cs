@@ -11,13 +11,22 @@ public class GameManager : MonoBehaviour
     // Object cache
     public StoryController storyController { get; set; }
     public SceneManager sceneManager { get; set; }
+    public TypingController typingController { get; set; }
+    public UIManager uIManager { get; set; }
 
+
+
+
+    // GameData
+
+    public float typingSpeed { get; private set; }
 
     private void Awake()
     {
         
         SingletonObject();
 
+        typingSpeed = 0.05f; // bu veri kay?t ettirilecek
     }
 
     void SingletonObject()

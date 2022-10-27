@@ -6,7 +6,7 @@ namespace VisualNovelTryout.Enums
 {
     public enum SceneState
     {
-        Normal,
+        Basic,
         UnSkippable,
         AutoSkip,
         ChoiceMenu,
