@@ -9,92 +9,172 @@ namespace VisualNovelTryout.Controller
 {
     public class StoryController : MonoBehaviour
     {
-        public EventList eventList { get; set; }
 
-        //Object Cache
-        TypingController typingController;
-        SceneManager sceneManager;
-        UIManager uiManager;
+        #region Serialized Fields
 
         // Event cache
-        [SerializeField] SceneObject intro;
-        [SerializeField] SceneObject ravenGame;
+        [SerializeField] SceneObject _intro;
+        [SerializeField] SceneObject _ravenGame;
 
-        SceneObject selectedSceneObject; // scene obje için seçilen obje ayr?m? yapmam gerek.
+        #endregion
 
- 
-        public ContentOfTheEventObject activeSceneContent { get; private set; }
+        #region Private Fields
+
+        //Object Cache
+        TypingController _typingController;
+        SceneManager _sceneManager;
+        UIManager _uiManager;
+
+        // For StoryFind
+        SceneObject _selectedSceneEvent; // scene obje için seçilen obje ayr?m? yapmam gerek.
+
+        private StoryWorkingState _storyWorkingState;
+
+        Coroutine _indexListenerRoutine;
+
+        #endregion
+
+        #region Public Properties
+
+        public EventList EventList { get; private set; }
         
-        public int activeSceneIndex { get; private set; }
+        // ForSceneManager
+        public ContentOfTheEventObject ActiveSceneContent { get; private set; }
+        public int ActiveSceneIndex { get; private set; }
 
-        private StoryIndexState storyIndexState;
+        #endregion
 
-        Coroutine IndexListenerRoutine;
+        #region Base Functions
 
         private void Awake()
         {
             //cache self
-            GameManager.Instance.storyController = this;
-            storyIndexState = new StoryIndexState();
+            GameManager.Instance.SetSelfCache(this.gameObject);
 
-            activeSceneIndex = 0;
-            activeSceneContent = intro.SceneContent[0];
+            ActiveSceneIndex = 0;
+            ActiveSceneContent = _intro.SceneContent[0]; // Bunlar save ile gelebilir. Bu yüzden GamaManager'de tutulmas? daha do?ru
 
-            
+
         }
 
         private void Start()
         {
-            typingController = GameManager.Instance.typingController;
-            sceneManager = GameManager.Instance.sceneManager;
-            uiManager = GameManager.Instance.uIManager;
+            _typingController = GameManager.Instance.TypingControllerCache;
+            _sceneManager = GameManager.Instance.SceneManagerCache;
+            _uiManager = GameManager.Instance.UIManagerCache;
 
-            FindEventData();
+        } 
+
+        private void OnEnable()
+        {
+            FindEventData(EventList.Intro); //onenable daha iyi olabilir
+            
         }
 
-        
+        #endregion
 
+
+
+        #region Public Functions
 
         //find index shoud be while
 
         public void SceneIndexController()
         {
-            SceneState sceneState = activeSceneContent.sceneState;
-            
-            if (storyIndexState == StoryIndexState.Working)
+            SceneState _sceneState = ActiveSceneContent.sceneState;
+
+            if (_storyWorkingState == StoryWorkingState.Working)
             {
-                StopCoroutine(IndexListenerRoutine);
+                StopCoroutine(_indexListenerRoutine);
             }
-            
-            IndexListenerRoutine = StartCoroutine(SceneIndexControllerRou(sceneState));
-            
+
+            _indexListenerRoutine = StartCoroutine(SceneIndexControllerRou(_sceneState));
+
         }
+
+        public void FindEventData(EventList eventList)
+        {
+            switch (eventList)
+            {
+                case EventList.Intro:
+                    _selectedSceneEvent = _intro;
+                    break;
+
+                case EventList.RavenGame:
+                    _selectedSceneEvent = _ravenGame;
+                    break;
+
+                default:
+                    break;
+            }
+
+            ActiveSceneIndex = 0;
+        }
+
+        #endregion
+
+
+        #region Private Functions
+
+
+        void SceneContentChanger(int value = 1)
+        {
+            if (ActiveSceneIndex + 1 > _selectedSceneEvent.SceneContent.Count -1) return;
+
+            ActiveSceneIndex += value;
+            ActiveSceneContent = _selectedSceneEvent.SceneContent[ActiveSceneIndex];
+            
+                  
+        }
+
 
         IEnumerator SceneIndexControllerRou(SceneState sceneState)
         {
-            storyIndexState = StoryIndexState.Working;
+            _storyWorkingState = StoryWorkingState.Working;
 
-            while (storyIndexState != StoryIndexState.Complated)
+            while (_storyWorkingState != StoryWorkingState.Complated)
             {
-                
-               
+
+
                 switch (sceneState)
                 {
                     case SceneState.Basic:
-                        if (sceneManager.sceneManagerState != SceneManagerState.Working &&
-                            typingController.typingState != TypingState.Typing &&
-                            uiManager.uIManagerState == UIManagerState.Complated) // Compated ba?a gelecek bunlar de?i?ecek
+                        if (_sceneManager.SceneManagerState != SceneManagerState.Working &&
+                            _typingController.TypingState != TypingState.Typing &&
+                            _uiManager.UIManagerState == UIManagerState.Complated) // Compated ba?a gelecek bunlar de?i?ecek
                         {
-                            storyIndexState = StoryIndexState.Complated;
+                            _storyWorkingState = StoryWorkingState.Complated;
 
                             SceneContentChanger();
-                            
+
                         }
 
                         break;
-                    case SceneState.UnSkippable:
+
+                    case SceneState.UnSkippable: // Ayni kod birlesmeli
+                        if (_sceneManager.SceneManagerState != SceneManagerState.Working &&
+                            _typingController.TypingState != TypingState.Typing &&
+                            _uiManager.UIManagerState == UIManagerState.Complated) // Compated ba?a gelecek bunlar de?i?ecek
+                        {
+                            _storyWorkingState = StoryWorkingState.Complated;
+
+                            SceneContentChanger();
+
+                        }
                         break;
-                    case SceneState.AutoSkip:
+
+                    case SceneState.AutoSkip: // ayni kod birlesmeli
+                        
+                        if (_sceneManager.SceneManagerState != SceneManagerState.Working &&
+                           _typingController.TypingState != TypingState.Typing &&
+                           _uiManager.UIManagerState == UIManagerState.Complated) // Compated ba?a gelecek bunlar de?i?ecek
+                        {
+                            _storyWorkingState = StoryWorkingState.Complated;
+
+                            SceneContentChanger();
+
+                        }
+
                         break;
                     case SceneState.ChoiceMenu:
                         break;
@@ -105,6 +185,7 @@ namespace VisualNovelTryout.Controller
                     case SceneState.End:
                         break;
                     default:
+                        _storyWorkingState = StoryWorkingState.Complated;
                         break;
                 }
 
@@ -114,28 +195,8 @@ namespace VisualNovelTryout.Controller
         }
 
 
-        void SceneContentChanger(int value = 1)
-        {
-            activeSceneIndex+= value; // range kontrol edilmeli
-            activeSceneContent = selectedSceneObject.SceneContent[activeSceneIndex]; // intro nas?l gelecek belki bir list yap?p s?ras?yla çektirmek mant?kl? olabilir.S?ralama belli olabilir. Son content sonra hangisi gelece?ini söylebilir.
-        }
+        #endregion
 
-        public void FindEventData()
-        {
-            switch (eventList)
-            {
-                case EventList.Intro:
-                    selectedSceneObject = intro;
-                    break;
-                case EventList.RavenGame:
-                    selectedSceneObject = ravenGame;
-                    break;
-                default:
-                    break;
-            }
-
-            activeSceneIndex = 0;
-        }
 
 
     }

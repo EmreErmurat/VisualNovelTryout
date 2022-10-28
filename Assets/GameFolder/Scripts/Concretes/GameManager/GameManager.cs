@@ -6,28 +6,84 @@ using VisualNovelTryout.Manager;
 
 public class GameManager : MonoBehaviour
 {
+
+    #region Static Field
+
     public static GameManager Instance { get; private set; }
 
-    // Object cache
-    public StoryController storyController { get; set; }
-    public SceneManager sceneManager { get; set; }
-    public TypingController typingController { get; set; }
-    public UIManager uIManager { get; set; }
+    #endregion
 
+    #region Private Fields
 
-
+    // Object Cache
+    StoryController _storyController;
+    SceneManager _sceneManager;
+    TypingController _typingController;
+    UIManager _uIManager;
 
     // GameData
 
-    public float typingSpeed { get; private set; }
+    float _tyipngSpeed;
+
+
+
+    #endregion
+
+    #region Public Properties
+
+    // Object Cache
+    public StoryController StoryControllerCache => _storyController;
+    public SceneManager SceneManagerCache => _sceneManager;
+    public TypingController TypingControllerCache => _typingController;
+    public UIManager UIManagerCache => _uIManager;
+
+
+    //Game Data
+    public float TypingSpeed => _tyipngSpeed;
+
+    #endregion
+
+    #region Base Fuctions
 
     private void Awake()
     {
-        
         SingletonObject();
 
-        typingSpeed = 0.05f; // bu veri kay?t ettirilecek
+        _tyipngSpeed = 0.05f; // bu veri kayit ettirilecek
     }
+
+    #endregion
+
+    #region Public Functions
+
+    public void SetSelfCache(GameObject gameObject)
+    {
+        if (gameObject.GetComponent<StoryController>() != null)
+        {
+            _storyController = gameObject.GetComponent<StoryController>();
+        }
+        else if (gameObject.GetComponent<SceneManager>() != null)
+        {
+            _sceneManager = gameObject.GetComponent<SceneManager>();
+        }
+        else if (gameObject.GetComponent<TypingController>() != null)
+        {
+            _typingController = gameObject.GetComponent<TypingController>();
+        }
+        else if (gameObject.GetComponent<UIManager>() != null)
+        {
+            _uIManager = gameObject.GetComponent<UIManager>();
+        }
+        else
+        {
+            return;
+        }
+
+    }
+
+    #endregion
+
+    #region Private Function
 
     void SingletonObject()
     {
@@ -41,5 +97,10 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(this);
         }
     }
+
+    #endregion
+
+
+   
 
 }

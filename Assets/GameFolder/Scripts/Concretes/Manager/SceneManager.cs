@@ -7,194 +7,269 @@ using VisualNovelTryout.Inputs;
 using VisualNovelTryout.Enums;
 using VisualNovelTryout.ScriptableObjects;
 using VisualNovelTryout.UI;
+using VisualNovelTryout.Animation;
 
 namespace VisualNovelTryout.Manager
 {
     public class SceneManager : MonoBehaviour
     {
-        PcInputsReceiver pcInputsReceiver;
-        StoryController storyController;
-        TypingController typingController;
-        UIManager uIManager;
 
+        #region Serialized Fields
 
-        public SceneManagerState sceneManagerState { get; private set; }
-        Coroutine normalStateCoroutine;
+        [SerializeField] TextBoxAnimationController _textBoxAnimationController;
 
-        bool normalStateBool;
-        bool gameIsRunning = true;
+        #endregion
 
-        IEnumerator selectedElaborated;
+        PcInputsReceiver _pcInputsReceiver;
+        StoryController _storyController;
+        TypingController _typingController;
+        UIManager _uIManager;
+
+        #region Private Fields
+
+        // For SceneManager
+        bool _gameIsRunning = true;
+        bool _normalStateIsActive;
+        bool _unSkippableStateIsActive;
+
+        Coroutine _basicStateCoroutine;
+
+        IEnumerator _selectedDetailedEvent;
+
+        #endregion
+
+        #region Public Properties
+
+        public SceneManagerState SceneManagerState { get; private set; }
+
+        #endregion
+
+        #region Base Functions
 
         private void Awake()
         {
-            GameManager.Instance.sceneManager = this;
-            pcInputsReceiver = new PcInputsReceiver();
-           
+            GameManager.Instance.SetSelfCache(this.gameObject);
+            _pcInputsReceiver = new PcInputsReceiver();
+
         }
 
         private void Start()
         {
-            storyController = GameManager.Instance.storyController;
-            typingController = GameManager.Instance.typingController;
-            uIManager = GameManager.Instance.uIManager;
+            _storyController = GameManager.Instance.StoryControllerCache;
+            _typingController = GameManager.Instance.TypingControllerCache;
+            _uIManager = GameManager.Instance.UIManagerCache;
 
-
-            
         }
-        
+
+
         private void Update()
         {
-            //if (pcInputsReceiver.MouseZeroInput)
-            //{
 
-            //    StartCoroutine( testt(index));
-            //    print(index);
-            //    index++;
-            //}
-           
-
-            if (pcInputsReceiver.MouseZeroInput && gameIsRunning)
+            if (_pcInputsReceiver.MouseZeroInput && _gameIsRunning)
             {
-                sceneManagerState = SceneManagerState.Working;
 
-                gameIsRunning = false;
+                StartWorking();
 
-                FindSceneElaborated();
+            }
+
+        }
+        #endregion
 
 
-                StartCoroutine(selectedElaborated);
 
-                
+        #region Public Functions
+
+        public void StartWorking()
+        {
+            if (!_gameIsRunning) return;
+
+            SceneManagerState = SceneManagerState.Working;
+
+            _gameIsRunning = false;
+
+            FindDetailedEvent();
+
+            StartCoroutine(_selectedDetailedEvent);
+
+        }
+
+        #endregion
+
+
+        #region Private Functions
+
+
+        void FindDetailedEvent()
+        {
+            switch (_storyController.EventList)
+            {
+                case EventList.Intro:
+                    _selectedDetailedEvent = DetailedIntro();
+                    break;
+
+                case EventList.RavenGame:
+                    _selectedDetailedEvent = DetailedRavenGame();
+                    break;
+
+                default:
+                    break;
+            }
+
+        }
+
+        IEnumerator InputCooldown(float value = .5f, bool outoSkip = false)
+        {
+            yield return new WaitForSeconds(value);
+            _gameIsRunning = true;
+            if (outoSkip)
+            {
+                StartWorking();
             }
         }
 
-
         void DelegateTheDuties()
         {
-            
-            StartCoroutine(InputCooldown());
 
-            switch (storyController.activeSceneContent.sceneState)
+            switch (_storyController.ActiveSceneContent.sceneState)
             {
                 case SceneState.Basic:
 
-                    if (storyController.activeSceneContent.FadeTime != 0)
+                    StartCoroutine(InputCooldown());
+
+                    if (_normalStateIsActive || _typingController.TypingState == TypingState.Typing || _uIManager.UIManagerState != UIManagerState.Complated)
                     {
-                        if (normalStateBool || typingController.typingState == TypingState.Typing || uIManager.uIManagerState != UIManagerState.Complated)
+                        if (_normalStateIsActive)
                         {
-                            if (normalStateBool)
-                            {
-                                StopCoroutine(normalStateCoroutine);
-                                normalStateBool = false;
-                            }
-
-                            uIManager.ChangeImage(storyController.activeSceneContent.sprite, storyController.activeSceneContent.FadeTime);
-                            typingController.TypeDialogue(storyController.activeSceneContent.context, storyController.activeSceneContent.characters);
-                            sceneManagerState = SceneManagerState.Complated;
-
+                            StopCoroutine(_basicStateCoroutine);
+                            _normalStateIsActive = false;
                         }
-                        else
-                        {
-                            normalStateCoroutine = StartCoroutine(NormalStateRoutine());
-                        }
+
+                        _uIManager.ChangeImage(_storyController.ActiveSceneContent.sprite, _storyController.ActiveSceneContent.FadeTime);
+                        _typingController.TypeDialogue(_storyController.ActiveSceneContent.context, _storyController.ActiveSceneContent.characters);
+
+                        SceneManagerState = SceneManagerState.Complated;
 
                     }
                     else
                     {
-                        typingController.TypeDialogue(storyController.activeSceneContent.context, storyController.activeSceneContent.characters);
-
-
-                        sceneManagerState = SceneManagerState.Complated;
+                        _basicStateCoroutine = StartCoroutine(BasicStateRoutine());
                     }
+
                     break;
 
                 case SceneState.UnSkippable:
+
+                    StartCoroutine(InputCooldown(_storyController.ActiveSceneContent.WaitTime));
+
+                    StartCoroutine(UnSkippableRoutine());
+
                     break;
+
                 case SceneState.AutoSkip:
+
+                    StartCoroutine(InputCooldown(_storyController.ActiveSceneContent.WaitTime, true));
+
+                    StartCoroutine(UnSkippableRoutine());
+
                     break;
+
                 case SceneState.ChoiceMenu:
                     break;
+
                 case SceneState.Pan:
                     break;
+
                 case SceneState.Animation:
                     break;
+
                 case SceneState.End:
                     break;
+
                 default:
                     break;
             }
 
-            storyController.SceneIndexController();
+            _storyController.SceneIndexController();
         }
 
 
-
-        IEnumerator NormalStateRoutine()
+        IEnumerator BasicStateRoutine()
         {
-            normalStateBool = true;
+            _normalStateIsActive = true;
 
-            //typingController.TextBoxSwitch(false);
-            StartCoroutine(typingController.TransitionTextBox(false));
-            uIManager.ChangeImage(storyController.activeSceneContent.sprite, storyController.activeSceneContent.FadeTime); 
-
-            yield return new WaitForSeconds(storyController.activeSceneContent.FadeTime);
-
-            typingController.TypeDialogue(storyController.activeSceneContent.context, storyController.activeSceneContent.characters);
-
-            sceneManagerState = SceneManagerState.Complated;
-
-            normalStateBool = false;
-        }
-
-
-        IEnumerator InputCooldown(float value = .5f)
-        {
-            yield return new WaitForSeconds(value);
-            gameIsRunning = true;
-        }
-
-
-        void FindSceneElaborated()
-        {
-            switch (storyController.eventList)
+            if (_storyController.ActiveSceneContent.sprite != _uIManager.LastSprite)
             {
-                case EventList.Intro:
-                    selectedElaborated = IntroElaborated();
-                    break;
-                case EventList.RavenGame:
-                    selectedElaborated = RavenGameElaborated();
-                    break;
-                default:
-                    break;
+                _textBoxAnimationController.TextBoxSetTransiton(false);
             }
-            
+
+            _uIManager.ChangeImage(_storyController.ActiveSceneContent.sprite, _storyController.ActiveSceneContent.FadeTime);
+
+            yield return new WaitForSeconds(_storyController.ActiveSceneContent.FadeTime);
+
+            _typingController.TypeDialogue(_storyController.ActiveSceneContent.context, _storyController.ActiveSceneContent.characters);
+
+            SceneManagerState = SceneManagerState.Complated;
+
+            _normalStateIsActive = false;
         }
+
+        IEnumerator UnSkippableRoutine() // Basic ile ayni kod. Birlestirilmesi gerek
+        {
+            _unSkippableStateIsActive = true;
+
+            if (_storyController.ActiveSceneContent.sprite != _uIManager.LastSprite)
+            {
+                _textBoxAnimationController.TextBoxSetTransiton(false);
+            }
+
+            _uIManager.ChangeImage(_storyController.ActiveSceneContent.sprite, _storyController.ActiveSceneContent.FadeTime);
+
+            yield return new WaitForSeconds(_storyController.ActiveSceneContent.FadeTime);
+
+            _typingController.TypeDialogue(_storyController.ActiveSceneContent.context, _storyController.ActiveSceneContent.characters);
+
+            SceneManagerState = SceneManagerState.Complated;
+
+            _unSkippableStateIsActive = false;
+        }
+
+        #endregion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         #region Scene Events // Elaborated Codes
 
-        IEnumerator IntroElaborated()
+        IEnumerator DetailedIntro()
         {
-            print("w");
-            switch (storyController.activeSceneIndex)
+            switch (_storyController.ActiveSceneIndex)
             {
 
 
-                case 5:
-                    if (true) // private ??
-                    {
-                        storyController.activeSceneContent.context = "Here we go. Back to Home again...";
-                    }
-                    else
-                    {
-                        storyController.activeSceneContent.context = "Here we go. Back to Nicole's again...";
-                    }
+                case 10:
 
+                    print(10);
                     DelegateTheDuties();
                     // standart ?ekilde devam edecek...
-                    storyController.eventList = EventList.RavenGame;
-                    storyController.FindEventData();
+                    //storyController.eventList = EventList.RavenGame;
+                    yield return new WaitForSeconds(0.3f);
+                    _storyController.FindEventData(EventList.RavenGame);
 
                     break;
 
@@ -208,9 +283,9 @@ namespace VisualNovelTryout.Manager
             yield return null;
         }
 
-        IEnumerator RavenGameElaborated()
+        IEnumerator DetailedRavenGame()
         {
-            switch (storyController.activeSceneIndex)
+            switch (_storyController.ActiveSceneIndex)
             {
                 
 

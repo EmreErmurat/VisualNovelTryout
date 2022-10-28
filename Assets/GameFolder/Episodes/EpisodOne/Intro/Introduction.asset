@@ -26,12 +26,12 @@ MonoBehaviour:
     sprite: {fileID: 21300000, guid: 8234cada568e09249bfe406c3e9111af, type: 3}
     FadeTime: 1
     WaitTime: 0
-  - sceneState: 0
+  - sceneState: 2
     characters: 1
-    context: Finishing the high school and enrolling into a good university...
-    sprite: {fileID: 0}
+    context: <b>Finishing</b> the high school and enrolling into a good university...
+    sprite: {fileID: 21300000, guid: 8234cada568e09249bfe406c3e9111af, type: 3}
     FadeTime: 0
-    WaitTime: 0
+    WaitTime: 5
   - sceneState: 0
     characters: 2
     context: Sharing a dorm room with a good friend...
@@ -41,12 +41,12 @@ MonoBehaviour:
   - sceneState: 0
     characters: 1
     context: Everything changed with a notification letter and a phone call.
-    sprite: {fileID: 0}
+    sprite: {fileID: 21300000, guid: 59017ac3015e3db44b3ce3a1a04fc337, type: 3}
     FadeTime: 0
     WaitTime: 0
   - sceneState: 0
     characters: 1
-    context: Here we go. Back to Nicole's again..
+    context: Here we go. Back to Nicole's again...
     sprite: {fileID: 21300000, guid: 8e470bf474abd2b4196bf0887bcd8488, type: 3}
     FadeTime: 1
     WaitTime: 0

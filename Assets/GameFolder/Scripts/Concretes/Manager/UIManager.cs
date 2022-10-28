@@ -11,120 +11,110 @@ namespace VisualNovelTryout.Manager
 
     public class UIManager : MonoBehaviour
     {
-        //Object cache
-        TypingController typingController;
-        Transition transition;
+
+        #region Serialized Fields
 
         //UI
-        [SerializeField] CanvasGroup backgroundCanvasGroup;
-        [SerializeField] Image background;
+        [SerializeField] CanvasGroup _backgroundCanvasGroup;
+        [SerializeField] Image _background;
 
-        public UIManagerState uIManagerState { get; private set; }
+        #endregion
+
+        #region Private Fields
+
+        //Object cache
+        TransitionHolder _transitionHolder;
+
+        //for ImagePrint
+        float _newFadeTime;
+        bool _skipFadeOut;
 
 
-        Coroutine changeImageRoutine;
+        Coroutine _changeImageRoutine;
 
-        float newFadeTime;
-        bool skipFadeOut;
+        #endregion
+
+        #region Public Properties
+
+        public UIManagerState UIManagerState { get; private set; }
+        public Sprite LastSprite { get; private set; }
+        #endregion
+
+        #region Base Functions
 
         private void Awake()
         {
-            GameManager.Instance.uIManager = this;
+            GameManager.Instance.SetSelfCache(this.gameObject);
 
-            transition = GetComponent<Transition>();
+            _transitionHolder = GetComponent<TransitionHolder>();
         }
 
-        private void Start()
-        {
-            typingController = GameManager.Instance.typingController;
-        }
+        #endregion
 
+        #region Public Functions
 
         public void ChangeImage(Sprite importedSprite, float fadeTime)
         {
-            newFadeTime = fadeTime;
-            switch (uIManagerState)
+            _newFadeTime = fadeTime;
+            LastSprite = importedSprite;
+
+            switch (UIManagerState)
             {
 
                 case UIManagerState.FadeOut:
 
-                    transition.StopFade();
-                    newFadeTime = 0.2f;
-                    changeImageRoutine = StartCoroutine(ChangeImageCoroutine(importedSprite));
+                    _transitionHolder.StopFade();
+                    _newFadeTime = 0.2f;
+                    _changeImageRoutine = StartCoroutine(ChangeImageCoroutine(importedSprite));
 
                     break;
 
                 case UIManagerState.FadeIn:
 
-                    transition.StopFade();
-                    newFadeTime = 0.2f;
-                    skipFadeOut = true;
-                    changeImageRoutine = StartCoroutine(ChangeImageCoroutine(importedSprite));
+                    _transitionHolder.StopFade();
+                    _newFadeTime = 0.2f;
+                    _skipFadeOut = true;
+                    _changeImageRoutine = StartCoroutine(ChangeImageCoroutine(importedSprite));
 
 
                     break;
 
                 default:
-                    if (importedSprite == background.sprite) return;
-                    changeImageRoutine = StartCoroutine(ChangeImageCoroutine(importedSprite));
+                    if (importedSprite == _background.sprite) return;
+                    _changeImageRoutine = StartCoroutine(ChangeImageCoroutine(importedSprite));
+                   
                     break;
             }
         }
 
+        #endregion
+
+        #region Private Functions
+
         IEnumerator ChangeImageCoroutine(Sprite importedSprite)
         {
 
-            if (!skipFadeOut)
+            if (!_skipFadeOut)
             {
-                uIManagerState = UIManagerState.FadeOut;
+                UIManagerState = UIManagerState.FadeOut;
 
-                transition.FadeOut(backgroundCanvasGroup, (newFadeTime));
-                yield return new WaitForSeconds(newFadeTime);
+                _transitionHolder.FadeOut(_backgroundCanvasGroup, (_newFadeTime));
+                yield return new WaitForSeconds(_newFadeTime);
 
-                background.sprite = importedSprite;
+                _background.sprite = importedSprite;
             }
 
-            uIManagerState = UIManagerState.FadeIn;
+            UIManagerState = UIManagerState.FadeIn;
 
-            transition.FadeIn(backgroundCanvasGroup, (newFadeTime));
-            yield return new WaitForSeconds(newFadeTime);
+            _transitionHolder.FadeIn(_backgroundCanvasGroup, (_newFadeTime));
+            yield return new WaitForSeconds(_newFadeTime);
 
-            uIManagerState = UIManagerState.Complated;
-            skipFadeOut = false;
-           
-            
+            UIManagerState = UIManagerState.Complated;
+            _skipFadeOut = false;
 
         }
 
-
-        //IEnumerator ChangeImageCoroutine(Sprite importedSprite, float fadeTime)
-        //{
-
-
-        //    if (fadeTime != 0)
-        //    {
-        //        uIManagerState = UIManagerState.Fade;
-
-        //        transition.FadeOut(backgroundCanvasGroup, (fadeTime));
-        //        yield return new WaitForSeconds(fadeTime);
-
-        //        background.sprite = importedSprite;
-
-        //        transition.FadeIn(backgroundCanvasGroup, (fadeTime));
-        //        yield return new WaitForSeconds(fadeTime);
-
-        //        uIManagerState = UIManagerState.Complated;
-        //    }
-        //    //else
-        //    //{
-        //    //    background.sprite = importedSprite;
-        //    //    uIManagerState = UIManagerState.Complated;
-        //    //}
-
-
-        //}
-
-
+        #endregion
 
     }
 

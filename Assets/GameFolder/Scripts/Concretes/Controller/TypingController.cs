@@ -10,127 +10,132 @@ namespace VisualNovelTryout.Controller
 {
     public class TypingController : MonoBehaviour
     {
+        #region Serialized Fields
+
         //TextBox IU Element
         [SerializeField] GameObject textPanel;
         [SerializeField] TextMeshProUGUI characterNameText;
         [SerializeField] TextMeshProUGUI dialogueTextArea;
 
-        TextBoxAnimationController textBoxAnimationController;
-        Transition transition;
-        CanvasGroup canvasGroup;
+        #endregion
 
-        //Control
-        public bool Typing { get; private set; }
+        #region Private Fields
         
-        public TypingState typingState { get; private set; }
+        // Object Cache
+        TextBoxAnimationController _textBoxAnimationController;
+        TransitionHolder _transitionHolder;
+        CanvasGroup _textBoxCanvasGroup;
 
-        //textSpeed to GameManager
-        float typingSpeed;
-
-
-        // Selected Character Name
-        string characterName;
-
-
-        // Line Text
-        string selectedDialogueText;
-
-
-        // NameBox Typing speed. -- Lines Index
-        float nameTypingSpeed = 0.02f;
-
+        // Typing System Needs
+        float _typingSpeed;
+        string _characterName;
+        string _selectedDialogueText;
+        float _nameTypingSpeed = 0.02f;
 
         //Coroutine
-        Coroutine typeDialogueCoroutine;
-        Coroutine typeNameCoroutine;
+        Coroutine _typeDialogueCoroutine;
+        Coroutine _typeNameCoroutine;
 
+        #endregion
+
+        #region Public Properties
+
+        public TypingState TypingState { get; private set; }
+
+        #endregion
+
+        #region Base Functions
         private void Awake()
         {
-            GameManager.Instance.typingController = this;
+            GameManager.Instance.SetSelfCache(this.gameObject);
 
-            typingState = new TypingState(); // gerek var m? emin de?ilim.
-
-            textBoxAnimationController = textPanel.GetComponent<TextBoxAnimationController>();
-            transition = GetComponent<Transition>();
-            canvasGroup = textPanel.gameObject.GetComponent<CanvasGroup>();
+            _textBoxAnimationController = textPanel.GetComponentInParent<TextBoxAnimationController>();
+            _transitionHolder = GetComponent<TransitionHolder>();
+            _textBoxCanvasGroup = textPanel.gameObject.GetComponent<CanvasGroup>();
         }
 
         private void OnEnable()
         {
-            typingSpeed = GameManager.Instance.typingSpeed;
+            _typingSpeed = GameManager.Instance.TypingSpeed;
         }
+
+        #endregion
+
+        #region Public Functions
 
         public void TypeDialogue(string importedText, Enums.Characters charactersEnum)
         {
             if (importedText == string.Empty)
             {
-                StartCoroutine(TransitionTextBox(false));
-                //TextBoxSwitch(false);
+                _textBoxAnimationController.TextBoxSetTransiton(false);  
                 return;
             }
 
 
-            if (typingState == TypingState.Typing)
+            if (TypingState == TypingState.Typing)
             {
-                typingSpeed = 0.01f;
+                _typingSpeed = 0.01f;
             }
             else
             {
-                if (characterName != charactersEnum.ToString())
+                if (_characterName != charactersEnum.ToString())
                 {
-                    characterName = charactersEnum.ToString();
+                    _characterName = charactersEnum.ToString();
                     characterNameText.text = string.Empty;
-                    typeNameCoroutine = StartCoroutine(TypeName());
+                    _typeNameCoroutine = StartCoroutine(TypeName());
                 }
 
-                selectedDialogueText = importedText;
-                //TextBoxSwitch(true);
-                StartCoroutine(TransitionTextBox(true));
+                _selectedDialogueText = importedText;
+                _textBoxAnimationController.TextBoxSetTransiton(true);
                 dialogueTextArea.text = string.Empty;
-                typeDialogueCoroutine = StartCoroutine(TypeLine());
+                _typeDialogueCoroutine = StartCoroutine(TypeLine());
             }
 
 
         }
+
+        #endregion
+
+        #region Private Functions
 
         IEnumerator TypeName()
         {
             yield return new WaitForSeconds(.2f);
 
-            foreach (char c in characterName.ToCharArray())
+            foreach (char c in _characterName.ToCharArray())
             {
                 characterNameText.text += c;
-                yield return new WaitForSeconds(nameTypingSpeed);
+                yield return new WaitForSeconds(_nameTypingSpeed);
             }
         }
 
         IEnumerator TypeLine()
         {
-            typingState = TypingState.Typing;
+            TypingState = TypingState.Typing;
 
             yield return new WaitForSeconds(.2f);
 
-            for (int i = 0; i < selectedDialogueText.Length; i++)
+            for (int i = 0; i < _selectedDialogueText.Length; i++)
             {
 
-                if (selectedDialogueText[i] == '<')
+                if (_selectedDialogueText[i] == '<')
                 {
-                    selectedDialogueText += SkipRichText(ref i);
+                    dialogueTextArea.text += SkipRichText(ref i);
                 }
                 else
                 {
-                    dialogueTextArea.text += selectedDialogueText[i];
+                    dialogueTextArea.text += _selectedDialogueText[i];
                 }
 
-                yield return new WaitForSeconds(typingSpeed);
+                yield return new WaitForSeconds(_typingSpeed);
 
             }
 
-            typingState = TypingState.Complated;
+            TypingState = TypingState.Complated;
 
-            if (typingSpeed != GameManager.Instance.typingSpeed)
+            if (_typingSpeed != GameManager.Instance.TypingSpeed)
             {
-                typingSpeed = GameManager.Instance.typingSpeed;
+                _typingSpeed = GameManager.Instance.TypingSpeed;
             }
 
         }
@@ -140,55 +145,30 @@ namespace VisualNovelTryout.Controller
         {
             string _richText = string.Empty;
 
-            while (true)
+            while (i < _selectedDialogueText.Length)
             {
-                _richText += selectedDialogueText[i];
 
-                if (selectedDialogueText[i] == '>')
+                _richText += _selectedDialogueText[i];
+
+                if (_selectedDialogueText[i] == '>')
                 {
+
                     return _richText;
-                    //break; // while döngüsü içinde return varsa break e gerek yok mu bilmiyorum.
-                }               
+                    
+                }
 
                 i++;
+               
 
             }
+
+            return _richText;
         }
 
-
-
-        //public void TextBoxSwitch(bool value)
-        //{
-        //    if (value)
-        //    {
-        //        if (textPanel.activeSelf) return;
-        //        textPanel.SetActive(true);
-        //        textBoxAnimationController.TextBoxSetAnimation(true);
-        //    }
-        //    else
-        //    {
-        //        textBoxAnimationController.TextBoxSetAnimation(false);
-        //    }
-        //}
-
-        
-        public IEnumerator TransitionTextBox(bool active) // bir de?i?kene atanmal? ve rutinlerin üstüste binmemesi sa?lanmal?.
-        {
-            if (active)
-            {
-                textPanel.SetActive(true);
-                transition.FadeIn(canvasGroup, .3f);
-            }
-            else
-            {
-                transition.FadeOut(canvasGroup, .3f);
-                yield return new WaitForSeconds(.4f);
-                textPanel.SetActive(false);
-            }
-            
-        }
+        #endregion
 
 
     }
+
 }
 

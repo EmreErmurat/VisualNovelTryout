@@ -9,11 +9,11 @@ namespace VisualNovelTryout.Enums
         
     }
 
-    public enum StoryIndexState
+    public enum StoryWorkingState
     {
-        Pending,
-        Working,
-        Complated
+        Complated,
+        Working
+        
     }
 
     public enum TypingState
