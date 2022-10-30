@@ -14,24 +14,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 0
   SceneContent:
-  - sceneState: 0
+  - sceneState: 2
     characters: 0
     context: 
     sprite: {fileID: 21300000, guid: f84cdfb6abc402d4fae5b38f99258e2b, type: 3}
-    FadeTime: 1
-    WaitTime: 0
+    FadeTime: 0.5
+    WaitTime: 1
   - sceneState: 0
     characters: 1
     context: I've been away for a long time and everything was going so well.
     sprite: {fileID: 21300000, guid: 8234cada568e09249bfe406c3e9111af, type: 3}
     FadeTime: 1
     WaitTime: 0
-  - sceneState: 2
+  - sceneState: 0
     characters: 1
     context: <b>Finishing</b> the high school and enrolling into a good university...
     sprite: {fileID: 21300000, guid: 8234cada568e09249bfe406c3e9111af, type: 3}
-    FadeTime: 0
-    WaitTime: 5
+    FadeTime: 1
+    WaitTime: 0
   - sceneState: 0
     characters: 2
     context: Sharing a dorm room with a good friend...
@@ -42,7 +42,7 @@ MonoBehaviour:
     characters: 1
     context: Everything changed with a notification letter and a phone call.
     sprite: {fileID: 21300000, guid: 59017ac3015e3db44b3ce3a1a04fc337, type: 3}
-    FadeTime: 0
+    FadeTime: 1
     WaitTime: 0
   - sceneState: 0
     characters: 1
@@ -55,28 +55,28 @@ MonoBehaviour:
     context: 
     sprite: {fileID: 21300000, guid: 8b818bc2ad786f544b3b1e805ad6d393, type: 3}
     FadeTime: 1
-    WaitTime: 0.5
+    WaitTime: 1.5
   - sceneState: 2
     characters: 0
     context: 
     sprite: {fileID: 21300000, guid: c51ec8cad94540c4abb9939226dc66a2, type: 3}
     FadeTime: 0.5
-    WaitTime: 0.5
+    WaitTime: 1
   - sceneState: 2
     characters: 0
     context: 
     sprite: {fileID: 21300000, guid: f84cdfb6abc402d4fae5b38f99258e2b, type: 3}
     FadeTime: 0.5
-    WaitTime: 0.5
+    WaitTime: 1
   - sceneState: 2
     characters: 0
     context: 
     sprite: {fileID: 21300000, guid: eb5a66d1a37c2454fbe824c85965ea97, type: 3}
     FadeTime: 0.5
-    WaitTime: 0.5
+    WaitTime: 1
   - sceneState: 2
     characters: 0
     context: 
     sprite: {fileID: 21300000, guid: f84cdfb6abc402d4fae5b38f99258e2b, type: 3}
     FadeTime: 0.5
-    WaitTime: 0.5
+    WaitTime: 1

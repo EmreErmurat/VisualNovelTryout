@@ -14,26 +14,25 @@ namespace VisualNovelTryout.Manager
     public class SceneManager : MonoBehaviour
     {
 
-        #region Serialized Fields
 
-        [SerializeField] TextBoxAnimationController _textBoxAnimationController;
+        #region Private Fields
 
-        #endregion
-
+        //Object Cache
         PcInputsReceiver _pcInputsReceiver;
         StoryController _storyController;
         TypingController _typingController;
         UIManager _uIManager;
 
-        #region Private Fields
-
         // For SceneManager
         bool _gameIsRunning = true;
-        bool _normalStateIsActive;
+        bool _basicStateIsActive;
         bool _unSkippableStateIsActive;
 
+
+        // For Works Delegate
         Coroutine _basicStateCoroutine;
 
+        // For GameEvent
         IEnumerator _selectedDetailedEvent;
 
         #endregion
@@ -72,9 +71,19 @@ namespace VisualNovelTryout.Manager
 
             }
 
+            if (_pcInputsReceiver.JumpInput) 
+            {
+                RollBackGame();
+            }
+
+        }
+
+        private void OnEnable()
+        {
+            Invoke("StartWorking", .1f); // First click when Load Scene
+            
         }
         #endregion
-
 
 
         #region Public Functions
@@ -91,6 +100,16 @@ namespace VisualNovelTryout.Manager
 
             StartCoroutine(_selectedDetailedEvent);
 
+        }
+
+        public void RollBackGame()
+        {
+            _storyController.HardStopSceneIndexController();
+            _uIManager.HardStopChangeImage();
+            _typingController.HardStopTyping();
+
+            _storyController.RollBackIndex();
+            StartWorking();
         }
 
         #endregion
@@ -117,15 +136,6 @@ namespace VisualNovelTryout.Manager
 
         }
 
-        IEnumerator InputCooldown(float value = .5f, bool outoSkip = false)
-        {
-            yield return new WaitForSeconds(value);
-            _gameIsRunning = true;
-            if (outoSkip)
-            {
-                StartWorking();
-            }
-        }
 
         void DelegateTheDuties()
         {
@@ -136,12 +146,12 @@ namespace VisualNovelTryout.Manager
 
                     StartCoroutine(InputCooldown());
 
-                    if (_normalStateIsActive || _typingController.TypingState == TypingState.Typing || _uIManager.UIManagerState != UIManagerState.Complated)
+                    if (_basicStateIsActive || _typingController.TypingState == TypingState.Typing || _uIManager.UIManagerState != UIManagerState.Complated)
                     {
-                        if (_normalStateIsActive)
+                        if (_basicStateIsActive)
                         {
                             StopCoroutine(_basicStateCoroutine);
-                            _normalStateIsActive = false;
+                            _basicStateIsActive = false;
                         }
 
                         _uIManager.ChangeImage(_storyController.ActiveSceneContent.sprite, _storyController.ActiveSceneContent.FadeTime);
@@ -157,23 +167,37 @@ namespace VisualNovelTryout.Manager
 
                     break;
 
-                case SceneState.UnSkippable:
+                case SceneState.UnSkippable:    
+
+                    if (_basicStateIsActive)
+                    {
+                        StopCoroutine(_basicStateCoroutine);
+                        _basicStateIsActive = false;
+                    
+                    }
 
                     StartCoroutine(InputCooldown(_storyController.ActiveSceneContent.WaitTime));
 
-                    StartCoroutine(UnSkippableRoutine());
+                    StartCoroutine(BasicStateRoutine());    // There is no difference with BasicState.
 
                     break;
 
-                case SceneState.AutoSkip:
+                case SceneState.AutoSkip:   
+
+                    if (_basicStateIsActive)
+                    {
+                        StopCoroutine(_basicStateCoroutine);
+                        _basicStateIsActive = false;
+
+                    }
 
                     StartCoroutine(InputCooldown(_storyController.ActiveSceneContent.WaitTime, true));
 
-                    StartCoroutine(UnSkippableRoutine());
+                    StartCoroutine(BasicStateRoutine());    // There is no difference with BasicState. 
 
                     break;
 
-                case SceneState.ChoiceMenu:
+                case SceneState.ChoiceMenu: // Bir liste ile oyunda ilerlenen bölümleri tutmak ve daha sonra geri dönüslerde bu listeden yararlanmak mantikli olabilir. Yoksa catallasmalarda bulundugun yeri kaybedecegiz. 
                     break;
 
                 case SceneState.Pan:
@@ -193,112 +217,92 @@ namespace VisualNovelTryout.Manager
         }
 
 
+        IEnumerator InputCooldown(float value = .5f, bool outoSkip = false)
+        {
+            yield return new WaitForSeconds(value);
+            _gameIsRunning = true;
+            if (outoSkip)
+            {
+                StartWorking();
+            }
+        }
+
+        // Game Routine
+
         IEnumerator BasicStateRoutine()
         {
-            _normalStateIsActive = true;
+            _basicStateIsActive = true;
 
             if (_storyController.ActiveSceneContent.sprite != _uIManager.LastSprite)
-            {
-                _textBoxAnimationController.TextBoxSetTransiton(false);
+            {       
+                _typingController.TextBoxController(false);
             }
 
             _uIManager.ChangeImage(_storyController.ActiveSceneContent.sprite, _storyController.ActiveSceneContent.FadeTime);
 
-            yield return new WaitForSeconds(_storyController.ActiveSceneContent.FadeTime);
+            if (_uIManager.UIManagerState != UIManagerState.Complated)
+            {
+                yield return new WaitForSeconds(_storyController.ActiveSceneContent.FadeTime);
+            }
 
             _typingController.TypeDialogue(_storyController.ActiveSceneContent.context, _storyController.ActiveSceneContent.characters);
 
             SceneManagerState = SceneManagerState.Complated;
 
-            _normalStateIsActive = false;
+            _basicStateIsActive = false;
         }
 
-        IEnumerator UnSkippableRoutine() // Basic ile ayni kod. Birlestirilmesi gerek
-        {
-            _unSkippableStateIsActive = true;
 
-            if (_storyController.ActiveSceneContent.sprite != _uIManager.LastSprite)
+            #region Scene Events // Detailed Codes
+
+            IEnumerator DetailedIntro()
             {
-                _textBoxAnimationController.TextBoxSetTransiton(false);
+                switch (_storyController.ActiveSceneIndex)
+                {
+
+
+                    case 10:
+
+                        print(10);
+                        DelegateTheDuties();
+                        // standart ?ekilde devam edecek...
+                        //storyController.eventList = EventList.RavenGame;
+                        yield return new WaitForSeconds(0.3f);
+                        _storyController.FindEventData(EventList.RavenGame);
+
+                        break;
+
+
+
+                    default:
+                        DelegateTheDuties();
+                        break;
+                }
+
+                yield return null;
             }
 
-            _uIManager.ChangeImage(_storyController.ActiveSceneContent.sprite, _storyController.ActiveSceneContent.FadeTime);
+            IEnumerator DetailedRavenGame()
+            {
+                switch (_storyController.ActiveSceneIndex)
+                {
 
-            yield return new WaitForSeconds(_storyController.ActiveSceneContent.FadeTime);
 
-            _typingController.TypeDialogue(_storyController.ActiveSceneContent.context, _storyController.ActiveSceneContent.characters);
+                    default:
+                        DelegateTheDuties();
+                        break;
+                }
 
-            SceneManagerState = SceneManagerState.Complated;
 
-            _unSkippableStateIsActive = false;
-        }
+                yield return null;
+            }
+
+            #endregion
+
+
 
         #endregion
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        #region Scene Events // Elaborated Codes
-
-        IEnumerator DetailedIntro()
-        {
-            switch (_storyController.ActiveSceneIndex)
-            {
-
-
-                case 10:
-
-                    print(10);
-                    DelegateTheDuties();
-                    // standart ?ekilde devam edecek...
-                    //storyController.eventList = EventList.RavenGame;
-                    yield return new WaitForSeconds(0.3f);
-                    _storyController.FindEventData(EventList.RavenGame);
-
-                    break;
-
-
-
-                default:
-                    DelegateTheDuties();
-                    break;
-            }
-
-            yield return null;
-        }
-
-        IEnumerator DetailedRavenGame()
-        {
-            switch (_storyController.ActiveSceneIndex)
-            {
-                
-
-                default:
-                    DelegateTheDuties();
-                    break;
-            }
-
-
-            yield return null;
-        }
-
-        #endregion
 
 
 

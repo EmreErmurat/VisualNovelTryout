@@ -9,7 +9,7 @@ namespace VisualNovelTryout.Inputs
 
         //public float HorizontalInput => Input.GetAxis("Horizontal");
         //public float VerticalInput => Input.GetAxis("Vertical");
-        //public bool JumpInput => Input.GetButtonDown("Jump");
+        public bool JumpInput => Input.GetButtonDown("Jump");
 
         //public bool EscInput => Input.GetKeyDown(KeyCode.Escape);
 

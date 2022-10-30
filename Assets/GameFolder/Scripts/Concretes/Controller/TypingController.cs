@@ -67,7 +67,7 @@ namespace VisualNovelTryout.Controller
         {
             if (importedText == string.Empty)
             {
-                _textBoxAnimationController.TextBoxSetTransiton(false);  
+                TextBoxController(false);
                 return;
             }
 
@@ -86,12 +86,36 @@ namespace VisualNovelTryout.Controller
                 }
 
                 _selectedDialogueText = importedText;
-                _textBoxAnimationController.TextBoxSetTransiton(true);
+                TextBoxController(true);
                 dialogueTextArea.text = string.Empty;
                 _typeDialogueCoroutine = StartCoroutine(TypeLine());
             }
 
 
+        }
+
+        public void TextBoxController(bool isActive)
+        {
+            if (!isActive)
+            {
+                _textBoxAnimationController.TextBoxSetTransiton(false);
+                _characterName = string.Empty;
+                _selectedDialogueText = string.Empty;
+                dialogueTextArea.text = string.Empty;
+                characterNameText.text = string.Empty;
+                
+            }
+            else
+            {
+                _textBoxAnimationController.TextBoxSetTransiton(true);
+            }
+        }
+
+        public void HardStopTyping()
+        {
+            StopCoroutine(_typeDialogueCoroutine);
+            StopCoroutine(_typeNameCoroutine);
+            TypingState = TypingState.Complated;
         }
 
         #endregion

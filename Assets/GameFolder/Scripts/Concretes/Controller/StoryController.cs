@@ -111,6 +111,22 @@ namespace VisualNovelTryout.Controller
             ActiveSceneIndex = 0;
         }
 
+
+        public void HardStopSceneIndexController()
+        {
+            StopCoroutine(_indexListenerRoutine);
+            _storyWorkingState = StoryWorkingState.Complated;
+        }
+
+        public void RollBackIndex()
+        {
+            if (ActiveSceneIndex > 0)
+            {
+                ActiveSceneIndex--;
+                ActiveSceneContent = _selectedSceneEvent.SceneContent[ActiveSceneIndex];
+            }
+        }
+
         #endregion
 
 

@@ -85,8 +85,17 @@ namespace VisualNovelTryout.Manager
                    
                     break;
             }
+
         }
 
+
+        public void HardStopChangeImage()
+        {
+            StopCoroutine(_changeImageRoutine);
+            LastSprite = null;
+            _skipFadeOut = false;
+            UIManagerState = UIManagerState.Complated;
+        }
         #endregion
 
         #region Private Functions
