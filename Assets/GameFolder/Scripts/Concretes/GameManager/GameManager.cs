@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     SceneManager _sceneManager;
     TypingController _typingController;
     UIManager _uIManager;
+    PanController _panController;
 
     // GameData
 
@@ -36,7 +37,7 @@ public class GameManager : MonoBehaviour
     public SceneManager SceneManagerCache => _sceneManager;
     public TypingController TypingControllerCache => _typingController;
     public UIManager UIManagerCache => _uIManager;
-
+    public PanController PanControllerCache => _panController;
 
     //Game Data
     public float TypingSpeed => _tyipngSpeed;
@@ -74,6 +75,10 @@ public class GameManager : MonoBehaviour
         {
             _uIManager = gameObject.GetComponent<UIManager>();
         }
+        else if (gameObject.GetComponent<PanController>() != null)
+        {
+            _panController = gameObject.GetComponent<PanController>();
+        }
         else
         {
             return;
@@ -101,6 +106,6 @@ public class GameManager : MonoBehaviour
     #endregion
 
 
-   
+   // GameEventFlow ile oyunun event s?ras?n? kontrol ederiz. Böylece ChoiceMenu öncesine geri dönü? sa?layabiliriz.
 
 }

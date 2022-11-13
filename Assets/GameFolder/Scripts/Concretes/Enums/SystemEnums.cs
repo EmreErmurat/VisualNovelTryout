@@ -37,10 +37,17 @@ namespace VisualNovelTryout.Enums
         Working,
         Complated
     }
+    public enum PanState
+    {
+        Complated,
+        Running
+    }
 
     public enum EventList
     {
         Intro,
         RavenGame
     }
+
+
 }

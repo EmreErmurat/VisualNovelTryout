@@ -14,10 +14,10 @@ namespace VisualNovelTryout.ScriptableObjects
         public string context;
         public Sprite sprite;
         public float FadeTime;
-        public float WaitTime;
-
-       
-
+        public float WaitTime; // forInput
+        public bool HardStop;
+        public Sprite PanImage;
+        public string PanAnimation;
     }
 
 }

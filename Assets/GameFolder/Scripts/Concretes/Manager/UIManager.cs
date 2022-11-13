@@ -30,8 +30,8 @@ namespace VisualNovelTryout.Manager
         bool _skipFadeOut;
 
 
-        Coroutine _changeImageRoutine;
-
+        Coroutine _changeImageCoroutine;
+        Coroutine _closeBackgroundCoroutine;
         #endregion
 
         #region Public Properties
@@ -58,6 +58,12 @@ namespace VisualNovelTryout.Manager
             _newFadeTime = fadeTime;
             LastSprite = importedSprite;
 
+            if (!_backgroundCanvasGroup.gameObject.activeSelf)
+            {
+                OpenBackground(); // 
+                
+            }
+
             switch (UIManagerState)
             {
 
@@ -65,7 +71,7 @@ namespace VisualNovelTryout.Manager
 
                     _transitionHolder.StopFade();
                     _newFadeTime = 0.2f;
-                    _changeImageRoutine = StartCoroutine(ChangeImageCoroutine(importedSprite));
+                    _changeImageCoroutine = StartCoroutine(ChangeImageRoutine(importedSprite));
 
                     break;
 
@@ -74,14 +80,14 @@ namespace VisualNovelTryout.Manager
                     _transitionHolder.StopFade();
                     _newFadeTime = 0.2f;
                     _skipFadeOut = true;
-                    _changeImageRoutine = StartCoroutine(ChangeImageCoroutine(importedSprite));
+                    _changeImageCoroutine = StartCoroutine(ChangeImageRoutine(importedSprite));
 
 
                     break;
 
                 default:
                     if (importedSprite == _background.sprite) return;
-                    _changeImageRoutine = StartCoroutine(ChangeImageCoroutine(importedSprite));
+                    _changeImageCoroutine = StartCoroutine(ChangeImageRoutine(importedSprite));
                    
                     break;
             }
@@ -91,17 +97,36 @@ namespace VisualNovelTryout.Manager
 
         public void HardStopChangeImage()
         {
-            StopCoroutine(_changeImageRoutine);
+            StopCoroutine(_changeImageCoroutine);
+            _transitionHolder.StopFade();
             LastSprite = null;
             _skipFadeOut = false;
+            _backgroundCanvasGroup.alpha = 1;
             UIManagerState = UIManagerState.Complated;
+
+        }
+
+        public void CloseBackgroundImage(float duration)
+        {
+            _closeBackgroundCoroutine = StartCoroutine(CloseBackgroundImageRoutine(duration));
         }
         #endregion
 
         #region Private Functions
 
-        IEnumerator ChangeImageCoroutine(Sprite importedSprite)
+        private void OpenBackground()
         {
+            _backgroundCanvasGroup.alpha = 0;
+            _backgroundCanvasGroup.gameObject.SetActive(true);
+        }
+
+        IEnumerator ChangeImageRoutine(Sprite importedSprite)
+        {
+
+            if (!_backgroundCanvasGroup.gameObject.activeSelf)  // Deneme
+            {
+                _backgroundCanvasGroup.gameObject.SetActive(true);
+            }
 
             if (!_skipFadeOut)
             {
@@ -120,6 +145,15 @@ namespace VisualNovelTryout.Manager
 
             UIManagerState = UIManagerState.Complated;
             _skipFadeOut = false;
+
+        }
+
+        IEnumerator CloseBackgroundImageRoutine(float duration)
+        {
+            _transitionHolder.FadeOut(_backgroundCanvasGroup, duration);
+            yield return new WaitForSeconds(duration + .05f);
+            _background.sprite = null;
+            _backgroundCanvasGroup.gameObject.SetActive(false);
 
         }
 

@@ -4,6 +4,7 @@ using UnityEngine;
 using VisualNovelTryout.ScriptableObjects;
 using VisualNovelTryout.Enums;
 using VisualNovelTryout.Manager;
+using VisualNovelTryout.UI;
 
 namespace VisualNovelTryout.Controller
 {
@@ -24,6 +25,7 @@ namespace VisualNovelTryout.Controller
         TypingController _typingController;
         SceneManager _sceneManager;
         UIManager _uiManager;
+        PanController _panController;
 
         // For StoryFind
         SceneObject _selectedSceneEvent; // scene obje için seçilen obje ayr?m? yapmam gerek.
@@ -62,7 +64,7 @@ namespace VisualNovelTryout.Controller
             _typingController = GameManager.Instance.TypingControllerCache;
             _sceneManager = GameManager.Instance.SceneManagerCache;
             _uiManager = GameManager.Instance.UIManagerCache;
-
+            _panController = GameManager.Instance.PanControllerCache;
         } 
 
         private void OnEnable()
@@ -195,6 +197,16 @@ namespace VisualNovelTryout.Controller
                     case SceneState.ChoiceMenu:
                         break;
                     case SceneState.Pan:
+
+                        if (_sceneManager.SceneManagerState != SceneManagerState.Working &&
+                           _panController.PanState == PanState.Complated) // Compated ba?a gelecek bunlar de?i?ecek
+                        {
+                            _storyWorkingState = StoryWorkingState.Complated;
+
+                            SceneContentChanger();
+
+                        }
+
                         break;
                     case SceneState.Animation:
                         break;
