@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using VisualNovelTryout.Controller;
 using VisualNovelTryout.Manager;
+using VisualNovelTryout.ScriptableObjects;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,6 +11,12 @@ public class GameManager : MonoBehaviour
     #region Static Field
 
     public static GameManager Instance { get; private set; }
+
+    #endregion
+
+    #region Serialized Field
+
+    [SerializeField] GameData _gameData;
 
     #endregion
 
@@ -42,6 +49,7 @@ public class GameManager : MonoBehaviour
     //Game Data
     public float TypingSpeed => _tyipngSpeed;
 
+    public GameData GameDataCache => _gameData;
     #endregion
 
     #region Base Fuctions

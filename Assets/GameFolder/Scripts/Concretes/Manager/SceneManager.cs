@@ -41,8 +41,8 @@ namespace VisualNovelTryout.Manager
         
 
         // For GameEvent
-        [SerializeField]IEnumerator _selectedDetailedEvent;
-
+        [SerializeField] IEnumerator _selectedDetailedEvent;
+        DetailedEventBase _detailedEventBase;
 
         #endregion
 
@@ -58,7 +58,7 @@ namespace VisualNovelTryout.Manager
         {
             GameManager.Instance.SetSelfCache(this.gameObject);
             _pcInputsReceiver = new PcInputsReceiver();
-
+            _detailedEventBase = GetComponent<DetailedEventBase>();
         }
 
         private void Start()
@@ -67,6 +67,7 @@ namespace VisualNovelTryout.Manager
             _typingController = GameManager.Instance.TypingControllerCache;
             _uIManager = GameManager.Instance.UIManagerCache;
             _panController = GameManager.Instance.PanControllerCache;
+            
         }
 
 
@@ -111,9 +112,10 @@ namespace VisualNovelTryout.Manager
 
             _gameIsRunning = false;
 
-            FindDetailedEvent();
+            //FindDetailedEvent();
+            _detailedEventBase.FindDetailedEvent();
 
-            StartCoroutine(_selectedDetailedEvent);
+            //StartCoroutine(_selectedDetailedEvent);
 
         }
 
@@ -133,27 +135,28 @@ namespace VisualNovelTryout.Manager
 
         #region Private Functions
 
+        
 
-        void FindDetailedEvent() // Buradan yapamay?z. Her Scene icin farkli olacak. Nasil yapilacak buradan.
-        {
-            switch (_storyController.EventList)
-            {
-                case EventList.Intro:
-                    _selectedDetailedEvent = DetailedIntro();
-                    break;
+        //void FindDetailedEvent() // Buradan yapamay?z. Her Scene icin farkli olacak. Nasil yapilacak buradan.
+        //{
+        //    switch (_storyController.EventList)
+        //    {
+        //        case EventList.Intro:
+        //            _selectedDetailedEvent = DetailedIntro(); // buray? bir ba?ka dosyadan çekece?iz. Her bölüm için farkl? olacak.
+        //            break;
 
-                case EventList.RavenGame:
-                    _selectedDetailedEvent = DetailedRavenGame();
-                    break;
+        //        case EventList.RavenGame:
+        //            _selectedDetailedEvent = DetailedRavenGame();
+        //            break;
 
-                default:
-                    break;
-            }
+        //        default:
+        //            break;
+        //    }
 
-        }
+        //}
 
 
-        void DelegateTheDuties()
+        public void DelegateTheDuties()
         {
 
             switch (_storyController.ActiveSceneContent.sceneState)
@@ -400,63 +403,63 @@ namespace VisualNovelTryout.Manager
 
 
         
-            #region Scene Events // Detailed Codes
+            //#region Scene Events // Detailed Codes
 
-            IEnumerator DetailedIntro()
-            {
-                switch (_storyController.ActiveSceneIndex)
-                {
+            //IEnumerator DetailedIntro()
+            //{
+            //    switch (_storyController.ActiveSceneIndex)
+            //    {
 
-                    case 5:
+            //        case 5:
 
-                    if (true)
-                    {
-                        _storyController.ActiveSceneContent.context = "Here we go. Back to Home again...";
-                    }
-                    else
-                    {
-                        _storyController.ActiveSceneContent.context = "Here we go. Back to Nicole's again...";
-                    }
-                    DelegateTheDuties();
-                    break;
+            //        if (true)
+            //        {
+            //            _storyController.ActiveSceneContent.context = "Here we go. Back to Home again...";
+            //        }
+            //        else
+            //        {
+            //            _storyController.ActiveSceneContent.context = "Here we go. Back to Nicole's again...";
+            //        }
+            //        DelegateTheDuties();
+            //        break;
 
-                    case 10:
+            //        case 10:
 
-                        print(10);
-                        DelegateTheDuties();
-                        // standart sekilde devam edecek...
-                        //storyController.eventList = EventList.RavenGame;
-                        yield return new WaitForSeconds(0.3f);
-                        _storyController.FindEventData(EventList.RavenGame);
+            //            print(10);
+            //            DelegateTheDuties();
+            //            // standart sekilde devam edecek...
+            //            //storyController.eventList = EventList.RavenGame;
+            //            yield return new WaitForSeconds(0.3f);
+            //            _storyController.FindEventData(EventList.RavenGame);
 
-                        break;
-
-
-
-                    default:
-                        DelegateTheDuties();
-                        break;
-                }
-
-                yield return null;
-            }
-
-            IEnumerator DetailedRavenGame()
-            {
-                switch (_storyController.ActiveSceneIndex)
-                {
+            //            break;
 
 
-                    default:
-                        DelegateTheDuties();
-                        break;
-                }
+
+            //        default:
+            //            DelegateTheDuties();
+            //            break;
+            //    }
+
+            //    yield return null;
+            //}
+
+            //IEnumerator DetailedRavenGame()
+            //{
+            //    switch (_storyController.ActiveSceneIndex)
+            //    {
 
 
-                yield return null;
-            }
+            //        default:
+            //            DelegateTheDuties();
+            //            break;
+            //    }
 
-            #endregion
+
+            //    yield return null;
+            //}
+
+            //#endregion
 
 
 

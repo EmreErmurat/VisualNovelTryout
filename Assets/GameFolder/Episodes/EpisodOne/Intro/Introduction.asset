@@ -61,7 +61,7 @@ MonoBehaviour:
     PanAnimation: 
   - sceneState: 1
     characters: 1
-    context: Here we go. Back to Home again...
+    context: Emre
     sprite: {fileID: 21300000, guid: 59017ac3015e3db44b3ce3a1a04fc337, type: 3}
     FadeTime: 1
     WaitTime: 3.5
@@ -83,7 +83,7 @@ MonoBehaviour:
     sprite: {fileID: 21300000, guid: 8b818bc2ad786f544b3b1e805ad6d393, type: 3}
     FadeTime: 1
     WaitTime: 1.5
-    HardStop: 0
+    HardStop: 1
     PanImage: {fileID: 0}
     PanAnimation: 
   - sceneState: 2
